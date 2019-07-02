@@ -1,0 +1,28 @@
+.PHONY: all clean
+
+CWD = $(shell pwd)
+THIRDPARTY = $(shell cd ../projects/thirdparty && pwd)
+STAGING = $(CWD)/staging
+ETC = $(THIRDPARTY)/staging/etc/nginx
+
+CD = cd
+CP = cp -pd
+RM = rm -f -r
+MD = mkdir
+
+
+all: clean
+	$(MD) $(STAGING)
+	$(CD) $(STAGING) && $(MD) etc  htdocs  html  log log/nginx  logs  run  sbin  tmp
+	$(CP) $(ETC)/fastcgi.conf $(STAGING)/etc/
+	$(CP) $(ETC)/fastcgi_params $(STAGING)/etc/
+	$(CP) $(ETC)/mime.types $(STAGING)/etc/
+	$(CP) $(ETC)/nginx.conf $(STAGING)/etc/
+	$(CP) $(ETC)/scgi_params $(STAGING)/etc/
+	$(CP) $(ETC)/uwsgi_params $(STAGING)/etc/
+	$(CP) $(THIRDPARTY)/staging/htdocs/index.html $(STAGING)/htdocs/
+	$(CP) $(THIRDPARTY)/staging/sbin/nginx $(STAGING)/sbin/
+
+clean:
+	$(RM) $(STAGING)
+
