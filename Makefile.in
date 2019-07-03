@@ -2,18 +2,21 @@
 
 CWD = $(shell pwd)
 THIRDPARTY = $(shell cd ../thirdparty && pwd)
+FLINTER = $(shell cd ../flinter && pwd)
 STAGING = $(CWD)/staging
 ETC = $(THIRDPARTY)/staging/etc/nginx
 
 CD = cd
-CP = cp -pd
+CP = cp -pdr
 RM = rm -f -r
 MD = mkdir
+COPYDEPS = $(FLINTER)/copydeps.sh
 
 
 all: clean
 	$(MD) $(STAGING)
-	$(CD) $(STAGING) && $(MD) bin etc  htdocs  html  log log/nginx  logs  run  sbin  tmp
+	$(CD) $(STAGING) && $(MD) bin etc etc/app etc/php-fpm.d htdocs  html  \
+	                    log log/nginx  logs  run  sbin  tmp lib
 	$(CP) $(ETC)/fastcgi.conf $(STAGING)/etc/
 	$(CP) $(ETC)/fastcgi_params $(STAGING)/etc/
 	$(CP) $(ETC)/mime.types $(STAGING)/etc/
@@ -25,6 +28,10 @@ all: clean
 	$(CP) $(THIRDPARTY)/staging/sbin/php-fpm $(STAGING)/sbin/
 	$(CP) $(THIRDPARTY)/staging/bin/php $(STAGING)/bin/
 	$(CP) bin/* $(STAGING)/bin/
+	$(CP) etc/* $(STAGING)/etc/
+	cd $(STAGING) && $(COPYDEPS) bin/php lib
+	cd $(STAGING) && $(COPYDEPS) sbin/nginx lib
+	cd $(STAGING) && $(COPYDEPS) sbin/php-fpm lib
 
 clean:
 	$(RM) $(STAGING)
